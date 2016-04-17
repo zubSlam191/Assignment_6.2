@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="EmailsTestSuite">
+
+  <test name="Private Email Test">
+    <classes>
+        <class name="com.emailprocessing.test.tests.GmailTest" />
+    </classes>
+  </test>
+    <test name="Business Email Test">
+        <classes>
+            <class name="com.emailprocessing.test.tests.BusinessEmailTest"/>
+        </classes>
+    </test>
+    <test name="Outlook Email Test">
+        <classes>
+            <class name="com.emailprocessing.test.tests.OutlookTest"/>
+        </classes>
+    </test>
+  
+</suite>  	
