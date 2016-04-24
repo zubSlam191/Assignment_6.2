@@ -5,5 +5,5 @@ package com.emailprocessing.email.conf.databases;
  */
 public class DBConstants {
     public static final String DATABASE_NAME="emaildetails";
-    public static final int DATABASE_VERSION=1;
+    public static final int DATABASE_VERSION=126;
 }

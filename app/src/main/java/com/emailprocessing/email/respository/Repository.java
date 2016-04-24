@@ -9,15 +9,15 @@ import java.util.Set;
  */
 public interface Repository<E, ID> {
 
-    Email findByAddress(String Address);
+    E findById(long id);
 
-    Email save(Email entity);
+    E save(Email entity);
 
-    Email update(Email entity);
+    E update(Email entity);
 
-    Email delete(Email entity);
+    E delete(Email entity);
 
-    Set<Email> findAll();
+    Set<E> findAll();
 
     int deleteAll();
 }

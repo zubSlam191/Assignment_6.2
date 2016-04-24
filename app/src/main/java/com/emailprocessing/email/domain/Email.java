@@ -6,6 +6,7 @@ import java.util.*;
  * Created by student on 2016/04/04.
  */
 public abstract class Email implements Serializable {
+    long id;
     Email nextEmail;
     String address;
     String description;
@@ -13,6 +14,14 @@ public abstract class Email implements Serializable {
     Date recent;
 
     public Email() {
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getAddress() {
@@ -63,13 +72,20 @@ public abstract class Email implements Serializable {
     public abstract String handleRequest(String request);
 
     private Email(Builder builder) {
+        this.id = builder.id;
         this.address = builder.address;
         this.description = builder.description;
     }
 
     public static class Builder{
+        private long id;
         private String address;
         private String description;
+
+        public Builder id(long value){
+            this.id = value;
+            return this;
+        }
 
         public Builder address(String value){
             this.address = value;
@@ -82,6 +98,7 @@ public abstract class Email implements Serializable {
         }
 
         public Builder copy(Email value) {
+            this.id = value.getId();
             this.address = value.getAddress();
             this.description = value.getDescription();
             return this;

@@ -24,15 +24,17 @@ public class EmailsRespositoryImpl extends SQLiteOpenHelper implements EmailsRes
     public static final String TABLE_EMAILS = "emails";
     private SQLiteDatabase db;
 
+    public static final String COLUMN_ID = "id";
     public static final String COLUMN_EMAIL = "email";
     public static final String COLUMN_DESCRIPTION = "description";
+
 
     // Database creation sql statement
     private static final String DATABASE_CREATE = " CREATE TABLE "
             + TABLE_EMAILS + "("
-            + COLUMN_EMAIL + " TEXT PRIMARY KEY , "
-            + COLUMN_DESCRIPTION + " TEXT UNIQUE NOT NULL);";
-
+            +COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + COLUMN_EMAIL + " TEXT NOT NULL , "
+            + COLUMN_DESCRIPTION + " TEXT NOT NULL);";
 
     public EmailsRespositoryImpl(Context context) {
         super(context, DBConstants.DATABASE_NAME, null, DBConstants.DATABASE_VERSION);
@@ -47,16 +49,17 @@ public class EmailsRespositoryImpl extends SQLiteOpenHelper implements EmailsRes
     }
 
     @Override
-    public Email findByAddress(String address) {
+    public Email findById(long id) {
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(
                 TABLE_EMAILS,
                 new String[]{
+                        COLUMN_ID,
                         COLUMN_EMAIL,
                         COLUMN_DESCRIPTION},
-                COLUMN_EMAIL + " =? ",
-                new String[]{address},
+                COLUMN_ID + " =? ",
+                new String[]{String.valueOf(id)},
                 null,
                 null,
                 null,
@@ -64,6 +67,7 @@ public class EmailsRespositoryImpl extends SQLiteOpenHelper implements EmailsRes
         if (cursor.moveToFirst()) {
             final Email settings = new Email
                     .Builder()
+                    .id(cursor.getLong(cursor.getColumnIndex(COLUMN_ID)))
                     .address(cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL)))
                     .description(cursor.getString(cursor.getColumnIndex(COLUMN_DESCRIPTION)))
                     .build();
@@ -80,7 +84,11 @@ public class EmailsRespositoryImpl extends SQLiteOpenHelper implements EmailsRes
         ContentValues values = new ContentValues();
         values.put(COLUMN_EMAIL, entity.getAddress());
         values.put(COLUMN_DESCRIPTION, entity.getDescription());
-        Email insertedEntity = entity;
+        long id =  db.insertOrThrow(TABLE_EMAILS, null, values);
+        Email insertedEntity =  new Email.Builder()
+                .copy(entity)
+                .id(id)
+                .build();
         return insertedEntity;
     }
 
@@ -93,8 +101,8 @@ public class EmailsRespositoryImpl extends SQLiteOpenHelper implements EmailsRes
         db.update(
                 TABLE_EMAILS,
                 values,
-                COLUMN_EMAIL + " =? ",
-                new String[]{entity.getAddress()}
+                COLUMN_ID + " =? ",
+                new String[]{String.valueOf(entity.getId())}
         );
         return entity;
     }
@@ -104,8 +112,8 @@ public class EmailsRespositoryImpl extends SQLiteOpenHelper implements EmailsRes
         open();
         db.delete(
                 TABLE_EMAILS,
-                COLUMN_EMAIL + " =? ",
-                new String[]{String.valueOf(entity.getAddress())});
+                COLUMN_ID + " =? ",
+                new String[]{String.valueOf(entity.getId())});
         return entity;
     }
 
@@ -118,6 +126,7 @@ public class EmailsRespositoryImpl extends SQLiteOpenHelper implements EmailsRes
         if (cursor.moveToFirst()) {
             do {
                 final Email setting = new Email.Builder()
+                        .id(cursor.getLong(cursor.getColumnIndex(COLUMN_ID)))
                         .address(cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL)))
                         .description(cursor.getString(cursor.getColumnIndex(COLUMN_DESCRIPTION)))
                         .build();
@@ -131,7 +140,7 @@ public class EmailsRespositoryImpl extends SQLiteOpenHelper implements EmailsRes
     public int deleteAll() {
         open();
         int rowsDeleted = db.delete(TABLE_EMAILS, null, null);
-        close();
+       // close();
         return rowsDeleted;
     }
 
